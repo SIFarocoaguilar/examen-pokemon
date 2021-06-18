@@ -1,0 +1,127 @@
+<html>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        .title {
+            background: #d6d6d6;
+            border-bottom: 3px solid #000;
+            padding: 15px 0 10px 0;
+            text-align: center;
+            margin:0px;
+        }
+        table {
+            width: 100%;
+        }
+        a {
+            background: rgb(2, 20, 177);
+            color: #fff;
+            padding: 2px 10px;
+            font-size: 12px;
+            text-decoration: none;
+        }
+        .tabla-listado tr th,
+        .tabla-listado tr td {
+            border:1px solid #000;
+            padding: 5px 15px;
+        }
+    </style>
+    <body>
+
+        <table >
+            <tr>
+                <td colspan="2"><h1 class="title">La Pokedex Xanxa!</h1></td>
+            </tr>
+            <tr>
+                <td style="padding:20px 30px;width:50%;border-right: 3px solid #000;">
+                    <p>Listado de Pokemons:</p>
+                    <div id="lista"></div>
+                </td>
+                <td style="padding:20px 30px;width:50%;vertical-align: top;">
+                    <p>Detalle del Pokemon:</p>
+                    <div id="detail_pokemones"></div>
+                </td>
+            </tr>
+        </table>
+        
+        <script>
+
+            fetch('https://pokeapi.co/api/v2/pokemon')
+                .then(response => response.json())
+                .then(data => {
+                    generarLista(data.results);
+            });
+            
+            function generarLista(data){
+                //var body = document.getElementsByTagName("body")[0];
+                var body = document.getElementById("lista");
+                var tabla = document.createElement("table");
+                tabla.setAttribute("class", "tabla-listado")
+                tabla.setAttribute("cellpadding", "0");
+                tabla.setAttribute("cellspacing", "0");
+                var tblHead = document.createElement("thead");
+                var hc = document.createElement("tr");
+                var h1 = document.createElement("th");
+                var h2 = document.createElement("th");
+                var th1 = document.createTextNode("Nombre");
+                var th2 = document.createTextNode("Acciones");
+                h1.appendChild(th1);
+                h2.appendChild(th2);
+                hc.appendChild(h1);
+                hc.appendChild(h2);
+                tblHead.appendChild(hc)
+                tabla.appendChild(tblHead);
+
+                var tblBody = document.createElement("tbody");
+                    //console.log(data);
+                    for(x of data) {
+                        var hilera = document.createElement("tr");
+                        var celda1 = document.createElement("td");
+                        var celda2 = document.createElement("td");
+                        var textoCelda1 = document.createTextNode(x.name);
+                        var link = document.createElement("a")
+                        link.setAttribute("href", "javascript:cargaDetalle('" + x.url + "')");
+                        var textoCelda2 =  document.createTextNode("Ver detalle");
+                        link.appendChild(textoCelda2);
+                        celda1.appendChild(textoCelda1);
+                        celda2.appendChild(link);
+                        hilera.appendChild(celda1);
+                        hilera.appendChild(celda2);
+
+                        tblBody.appendChild(hilera);
+                    }
+                tabla.appendChild(tblBody);
+                body.appendChild(tabla);
+            }
+
+            function cargaDetalle(url) {
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        var det = document.getElementById("detail_pokemones");
+                        det.innerHTML = "";
+                        var img = document.createElement("img");
+                        img.setAttribute("src", data.sprites.front_default);
+                        var name = document.createElement("p");
+                        var textoName = document.createTextNode("Nombre: " + data.forms[0].name);
+                        name.appendChild(textoName);
+                        var peso = document.createElement("p");
+                        var textoPeso = document.createTextNode("Peso: " + data.weight);
+                        peso.appendChild(textoPeso);
+                        var altura = document.createElement("p");
+                        var textoAltura = document.createTextNode("Altura: " + data.height);
+                        altura.appendChild(textoAltura);
+
+                        det.appendChild(img);   
+                        det.appendChild(name);
+                        det.appendChild(peso);
+                        det.appendChild(altura);
+                        
+                });
+            }
+
+        </script>
+
+    </body>
+</html>
